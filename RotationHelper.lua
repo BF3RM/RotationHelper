@@ -12,7 +12,13 @@ local pi = math.pi
 local sqrt = math.sqrt
 
 function RotationHelper:GetYawFromForward(forward)
-	return atan(forward.x, forward.z)
+	local yaw = atan(forward.x, forward.z)
+
+	if yaw < 0 then
+		yaw = 2 * pi + yaw
+	end
+
+	return yaw
 end
 
 function RotationHelper:GetYPRFromLUF(left, up, forward)

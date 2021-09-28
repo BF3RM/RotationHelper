@@ -15,7 +15,9 @@ function RotationHelper:GetYawFromForward(forward)
 	local yaw = atan(forward.x, forward.z)
 
 	if yaw < 0 then
-		yaw = 2 * pi + yaw
+		yaw = -yaw
+	else
+		yaw = 2 * pi - yaw
 	end
 
 	return yaw
@@ -33,7 +35,7 @@ function RotationHelper:GetYPRFromLUF(left, up, forward)
 		return yaw, pitch, roll
 	end
 
-	local pitch = asin(-forward.y)
+	local pitch = asin(forward.y)
 	local yaw = atan(forward.x, forward.z)
 	local roll = 0
 
@@ -56,42 +58,47 @@ function RotationHelper:GetYPRFromLUF(left, up, forward)
 	local cosPitch = u0:Dot(up)
 
 	if r0.x > r0.y and r0.x > r0.z and r0.x ~= 0 then
-		roll = roll + asin( (u0.x * cosPitch - up.x) / r0.x)
+		roll = asin( (u0.x * cosPitch - up.x) / r0.x)
 	elseif r0.y > r0.x and r0.y > r0.z and r0.y ~= 0 then
-		roll = roll + asin( (u0.y * cosPitch - up.y) / r0.y)
+		roll = asin( (u0.y * cosPitch - up.y) / r0.y)
 	elseif r0.z > r0.x and r0.z > r0.y and r0.z ~= 0 then
-		roll = roll + asin( (u0.z * cosPitch - up.z) / r0.z)
+		roll = asin( (u0.z * cosPitch - up.z) / r0.z)
 	else
 		if r0.x ~= 0 then
-			roll = roll + asin( (u0.x * cosPitch - up.x) / r0.x)
+			roll = asin( (u0.x * cosPitch - up.x) / r0.x)
 		elseif r0.y ~= 0 then
-			roll = roll + asin( (u0.y * cosPitch - up.y) / r0.y)
+			roll = asin( (u0.y * cosPitch - up.y) / r0.y)
 		elseif r0.z ~= 0 then
-			roll = roll + asin( (u0.z * cosPitch - up.z) / r0.z)
+			roll = asin( (u0.z * cosPitch - up.z) / r0.z)
 		else
 			print("[RotationHelper] All denominators are 0, something went wrong")
 		end
 	end
 
-	-- Change negative values to positive in range pi - 2Pi
+	-- Update ranges:
+	-- yaw: (0, 2pi), clockwise, north = 0
+	-- pitch: (-pi/2, pi/2), horizon = 0, straight up = pi/2
+	-- roll: (-pi/2, pi/2), horizon = 0, full roll right = pi/2
+
 	if yaw < 0 then
-		yaw = 2 * pi + yaw
-	end
-
-	if pitch < 0 then
-		pitch = 2 * pi + pitch
-	end
-
-	if roll < 0 then
-		roll = 2 * pi + roll
+		yaw = -yaw
+	else
+		yaw = 2 * pi - yaw
 	end
 
 	return yaw, pitch, roll
-
 end
 
 function RotationHelper:GetLUFFromYPR(yaw, pitch, roll)
 	-- Reference: http://planning.cs.uiuc.edu/node102.html
+
+	pitch = -pitch
+
+	if yaw < pi then
+		yaw = -yaw
+	else
+		yaw = 2 * pi - yaw
+	end
 
 	local fx = sin(yaw) * cos(pitch)
 	local fy = -sin(pitch)
@@ -99,13 +106,13 @@ function RotationHelper:GetLUFFromYPR(yaw, pitch, roll)
 
 	local forward = Vec3(fx, fy, fz)
 
-	local ux = (sin(yaw) * sin(pitch) * cos(roll) - cos(yaw) * sin(roll))
-	local uy = cos(pitch) * cos(roll)
-	local uz = (cos(yaw) * sin(pitch) * cos(roll) + sin(yaw) * sin(roll))
+	local lx = sin(yaw) * sin(pitch) * sin(roll) + cos(yaw) * cos(roll)
+	local ly = cos(pitch) * sin(roll)
+	local lz = cos(yaw) * sin(pitch) * sin(roll) - sin(yaw) * cos(roll)
 
-	local up = Vec3(ux, uy, uz)
+	local left = Vec3(lx, ly, lz)
 
-	local left = forward:Cross(up * -1)
+	local up = left:Cross(forward) * -1
 
 	return left, up, forward
 end

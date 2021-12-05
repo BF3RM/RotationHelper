@@ -1,6 +1,6 @@
 class 'RotationHelper'
 
---YPR: yaw, pitch, roll (range: 0 - 2Pi)
+--YPR: yaw, pitch, roll
 --LUF: left, up, forward
 --LT: LinearTransform
 
@@ -83,7 +83,7 @@ function RotationHelper:GetYPRFromLUF(left, up, forward)
 	-- Update ranges:
 	-- yaw: (0, 2pi), clockwise, north = 0
 	-- pitch: (-pi/2, pi/2), horizon = 0, straight up = pi/2
-	-- roll: (-pi/2, pi/2), horizon = 0, full roll right = pi/2
+	-- roll: (-pi, pi), horizon = 0, full roll right = pi
 
 	if yaw < 0 then
 		yaw = -yaw

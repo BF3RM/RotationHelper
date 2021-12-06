@@ -78,8 +78,8 @@ function RotationHelper:GetYPRFromLUF(left, up, forward)
 
 	-- Update ranges:
 	-- yaw: (0, 2pi), clockwise, north = 0
-	-- pitch: (-pi/2, pi/2), horizon = 0, straight up = pi/2
-	-- roll: (-pi, pi), horizon = 0, full roll right = pi
+	-- pitch: (-pi, pi), horizon = 0, straight up = pi/2
+	-- roll: (-pi/2, pi/2), horizon = 0, full roll right = pi/2
 
 	if yaw < 0 then
 		yaw = -yaw
@@ -88,11 +88,19 @@ function RotationHelper:GetYPRFromLUF(left, up, forward)
 	end
 
 	if up.y < 0 then
-		roll = pi - roll
-	end
+		roll = -roll
 
-	if roll > pi then
-		roll = -2 * pi + roll
+		if pitch < 0 then
+			pitch = (pitch + pi) * -1
+		else
+			pitch = pi - pitch
+		end
+
+		if yaw < pi then
+			yaw = yaw + pi
+		else
+			yaw = yaw - pi
+		end
 	end
 
 	return yaw, pitch, roll

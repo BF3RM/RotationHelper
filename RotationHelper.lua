@@ -35,16 +35,12 @@ function RotationHelper:GetYPRFromLUF(left, up, forward)
 		return yaw, pitch, roll
 	end
 
-	forward = forward * -1
-
-	local pitch = -asin(forward.y)
+	local pitch = asin(forward.y)
 
 	local yaw = atan(forward.x, forward.z)
 	local roll = 0
 
 	local y = Vec3(0,1,0)
-
-	forward = forward * -1
 
 	-- r0 is the right vector before pitch rotation
 	local r0 = Vec3(0,0,0)
@@ -105,7 +101,7 @@ end
 function RotationHelper:GetLUFFromYPR(yaw, pitch, roll)
 	-- Reference: http://planning.cs.uiuc.edu/node102.html
 
-	roll = -roll
+	pitch = -pitch
 
 	if yaw < pi then
 		yaw = -yaw

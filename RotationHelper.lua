@@ -1,6 +1,6 @@
 class 'RotationHelper'
 
---YPR: yaw, pitch, roll (range: 0 - 2Pi)
+--YPR: yaw, pitch, roll
 --LUF: left, up, forward
 --LT: LinearTransform
 
@@ -36,6 +36,7 @@ function RotationHelper:GetYPRFromLUF(left, up, forward)
 	end
 
 	local pitch = asin(forward.y)
+
 	local yaw = atan(forward.x, forward.z)
 	local roll = 0
 
@@ -77,13 +78,29 @@ function RotationHelper:GetYPRFromLUF(left, up, forward)
 
 	-- Update ranges:
 	-- yaw: (0, 2pi), clockwise, north = 0
-	-- pitch: (-pi/2, pi/2), horizon = 0, straight up = pi/2
+	-- pitch: (-pi, pi), horizon = 0, straight up = pi/2
 	-- roll: (-pi/2, pi/2), horizon = 0, full roll right = pi/2
 
 	if yaw < 0 then
 		yaw = -yaw
 	else
 		yaw = 2 * pi - yaw
+	end
+
+	if up.y < 0 then
+		roll = -roll
+
+		if pitch < 0 then
+			pitch = (pitch + pi) * -1
+		else
+			pitch = pi - pitch
+		end
+
+		if yaw < pi then
+			yaw = yaw + pi
+		else
+			yaw = yaw - pi
+		end
 	end
 
 	return yaw, pitch, roll

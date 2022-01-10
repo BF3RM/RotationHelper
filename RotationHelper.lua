@@ -1,4 +1,4 @@
-class 'RotationHelper'
+RotationHelper = class 'RotationHelper'
 
 --YPR: yaw, pitch, roll
 --LUF: left, up, forward

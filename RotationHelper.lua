@@ -24,6 +24,44 @@ function RotationHelper:GetYawFromForward(forward)
 	return yaw
 end
 
+-- Function to rotate a linear transform by 90 degrees around the Y-axis
+---@param transform LinearTransform
+function RotationHelper:RotateLinearTransform90DegreesYAxis(transform)
+	-- rotation matrix (the one you multiply your original matrix with)
+	-- [0, 0, 1]
+	-- [0, 1, 0]
+	-- [-1, 0, 0]
+
+	-- your matrix:
+	-- [xx, xy, xz]
+	-- [yz, yy, yz]
+	-- [zx, zx, zz]
+
+	-- zx, zy, zz
+	local s_Left = transform.forward
+
+	-- yx, yy, yz
+	local s_Up = transform.up
+
+	-- -xx, -xy, -xz
+	local s_Forward = Vec3(
+		-transform.left.x,
+		-transform.left.y,
+		-transform.left.z
+	)
+
+	local s_Trans = transform.trans
+
+	local rotatedTransform = LinearTransform(
+		s_Left,
+		s_Up,
+		s_Forward,
+		s_Trans
+	)
+
+	return rotatedTransform
+end
+
 function RotationHelper:GetYPRFromLUF(left, up, forward)
 	-- Reference: http://www.jldoty.com/code/DirectX/YPRfromUF/YPRfromUF.html
 

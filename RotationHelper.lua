@@ -110,8 +110,6 @@ function RotationHelper:GetYPRFromLUF(left, up, forward)
 			roll = asin((u0.y * cosPitch - up.y) / r0.y)
 		elseif r0.z ~= 0 then
 			roll = asin((u0.z * cosPitch - up.z) / r0.z)
-		else
-			--print("[RotationHelper] All denominators are 0, something went wrong")
 		end
 	end
 
@@ -169,8 +167,6 @@ end
 --------------Linear Transform variants-------
 function RotationHelper:GetYPRFromLT(linearTransform)
 	if linearTransform.typeInfo.name == nil or linearTransform.typeInfo.name ~= "LinearTransform" then
-		--print("[RotationHelper] Wrong argument for GetYPRFromLT, expected LinearTransform")
-
 		return
 	end
 
